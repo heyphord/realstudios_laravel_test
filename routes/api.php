@@ -4,6 +4,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CompanyController;
+use App\Http\Controllers\EmployeeController;
 
 
 /*
@@ -23,6 +24,9 @@ Route::group(['prefix' => 'v1'], function () {
     
     //COMPANY
     Route::resource('/company', CompanyController::class);
+
+    //EMPLOYEE
+    Route::resource('/employee', EmployeeController::class);
     
 });
 
