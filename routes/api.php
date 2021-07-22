@@ -3,6 +3,7 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\CompanyController;
 
 
 /*
@@ -16,9 +17,12 @@ use App\Http\Controllers\AuthController;
 |
 */
 
-Route::group(['prefix' => 'v1', 'namespace' => 'Api'], function () {
+Route::group(['prefix' => 'v1'], function () {
 
     Route::post('/admin/login', [AuthController::class,'login']);
-
+    
+    //COMPANY
+    Route::resource('/company', CompanyController::class);
+    
 });
 

@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Models\Company;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
+
 
 class CompanyController extends Controller
 {
@@ -14,7 +16,7 @@ class CompanyController extends Controller
      */
     public function index()
     {
-        Company::all()->paginate(10);
+        return Company::paginate(10);
     }
 
     /**
@@ -35,7 +37,25 @@ class CompanyController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $validator =  Validator::make($request->all(), [
+            'name'=>'required',                                   
+        ]);
+
+        if ($validator->fails()){ return response()->json(['message'=>$validator->errors()->first()], 400);  }
+        
+        try {
+            //add request data to DB
+           
+    
+            $company = Company::create( $request->all());
+
+            //todo send email after company has been created
+    
+           return $company;
+    
+        } catch (\Exception $e){
+            return response()->json(['message'=>$e->getMessage()], 400);
+        }
     }
 
     /**
@@ -46,7 +66,12 @@ class CompanyController extends Controller
      */
     public function show(Company $company)
     {
-        //
+        try {
+           return $company;
+    
+        } catch (\Exception $e){
+            return response()->json(['message'=>$e->getMessage()], 400);
+        }
     }
 
     /**
@@ -69,7 +94,13 @@ class CompanyController extends Controller
      */
     public function update(Request $request, Company $company)
     {
-        //
+        try {
+            $company->update( $request->all());
+            return $company;
+        } catch (\Exception $e){
+            return response()->json(['message'=>$e->getMessage()], 400);
+        }
+
     }
 
     /**
@@ -80,6 +111,12 @@ class CompanyController extends Controller
      */
     public function destroy(Company $company)
     {
-        //
+        try {
+            $company->delete();
+            return response()->json(['message'=>"Company deleted successfully"], 200);
+        } catch (\Exception $e){
+            return response()->json(['message'=>$e->getMessage()], 400);
+        }
+
     }
 }
