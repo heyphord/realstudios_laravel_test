@@ -134,7 +134,8 @@ class CompanyController extends Controller
     public function uploadLogo(Request $request){
 
         $validator =  Validator::make($request->all(), [
-            'logo' => 'dimensions:min_width=100,min_height=200',
+            'company_id'=>'required|exists:companies,id',                                   
+            'logo' => 'required|dimensions:min_width=100,min_height=200',
         ]);
 
         if ($validator->fails()){ return response()->json(['message'=>$validator->errors()->first()], 400);  }
@@ -142,8 +143,11 @@ class CompanyController extends Controller
 
         try {
             $path = $request->file('logo')->store('/public');
+            $company =Company::where('id', $request->company_id)->first();
+            $company->update( ['logo'=>$path]);
+            return CompanyResource::make($company);
 
-            return $path;
+
         } catch (\Exception $e){
             return response()->json(['message'=>$e->getMessage()], 400);
         }
