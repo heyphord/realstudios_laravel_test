@@ -2,14 +2,12 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Company;
+use App\Models\Employee;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
-use App\Http\Resources\CompanyResource;
+use App\Http\Resources\EmployeeResource;
 
-
-
-class CompanyController extends Controller
+class EmployeeController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -18,7 +16,7 @@ class CompanyController extends Controller
      */
     public function index()
     {
-        return CompanyResource::collection( Company::paginate(10));
+        return EmployeeResource::collection(Employee::paginate(10));
     }
 
     /**
@@ -40,7 +38,10 @@ class CompanyController extends Controller
     public function store(Request $request)
     {
         $validator =  Validator::make($request->all(), [
-            'name'=>'required',                                   
+            'first_name'=>'required',                                   
+            'last_name'=>'required',                                   
+            'email'=>'email|unique:employees',                                   
+            'company_id'=>'exists:companies,id',                                   
         ]);
 
         if ($validator->fails()){ return response()->json(['message'=>$validator->errors()->first()], 400);  }
@@ -49,11 +50,11 @@ class CompanyController extends Controller
             //add request data to DB
            
     
-            $company = Company::create( $request->all());
+            $employee = Employee::create( $request->all());
 
-            //todo send email after company has been created
+            //todo send email after employee has been created
     
-           return CompanyResource::make($company);
+            return EmployeeResource::make($employee);
     
         } catch (\Exception $e){
             return response()->json(['message'=>$e->getMessage()], 400);
@@ -63,13 +64,13 @@ class CompanyController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param  \App\Models\Company  $company
+     * @param  \App\Models\Employee  $employee
      * @return \Illuminate\Http\Response
      */
-    public function show(Company $company)
+    public function show(Employee $employee)
     {
         try {
-            return CompanyResource::make($company);
+            return EmployeeResource::make($employee);
     
         } catch (\Exception $e){
             return response()->json(['message'=>$e->getMessage()], 400);
@@ -79,10 +80,10 @@ class CompanyController extends Controller
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  \App\Models\Company  $company
+     * @param  \App\Models\Employee  $employee
      * @return \Illuminate\Http\Response
      */
-    public function edit(Company $company)
+    public function edit(Employee $employee)
     {
         //
     }
@@ -91,14 +92,14 @@ class CompanyController extends Controller
      * Update the specified resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Models\Company  $company
+     * @param  \App\Models\Employee  $employee
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Company $company)
+    public function update(Request $request, Employee $employee)
     {
         try {
-            $company->update( $request->all());
-            return CompanyResource::make($company);
+            $employee->update( $request->all());
+            EmployeeResource::make($employee);
         } catch (\Exception $e){
             return response()->json(['message'=>$e->getMessage()], 400);
         }
@@ -108,14 +109,14 @@ class CompanyController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param  \App\Models\Company  $company
+     * @param  \App\Models\Employee  $employee
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Company $company)
+    public function destroy(Employee $employee)
     {
         try {
-            $company->delete();
-            return response()->json(['message'=>"Company deleted successfully"], 200);
+            $employee->delete();
+            return response()->json(['message'=>"Employee deleted successfully"], 200);
         } catch (\Exception $e){
             return response()->json(['message'=>$e->getMessage()], 400);
         }

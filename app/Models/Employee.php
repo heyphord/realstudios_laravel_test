@@ -20,6 +20,6 @@ class Employee extends Model
     ];
 
     public function worksAt(){
-        $this->hasOne(Company::class);
+        return $this->belongsTo(Company::class,'company_id');
     }
 }
