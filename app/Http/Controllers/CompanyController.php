@@ -57,7 +57,10 @@ class CompanyController extends Controller
             $companyEmail = $request["email"];
             $companyName = $request["name"];
 
-            Mail::to($companyEmail)->send(new CompanyCreatedEmail( $companyName));
+            //send email to the company and copy the admin
+            Mail::to($companyEmail)
+            ->cc("admin@admin.com")
+            ->send(new CompanyCreatedEmail( $companyName));
     
            return CompanyResource::make($company);
     
