@@ -6,6 +6,8 @@ use App\Models\Company;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use App\Http\Resources\CompanyResource;
+use Illuminate\Support\Facades\Mail;
+use App\Mail\CompanyCreatedEmail;
 
 
 
@@ -41,17 +43,21 @@ class CompanyController extends Controller
     {
         $validator =  Validator::make($request->all(), [
             'name'=>'required',                                   
+            'email'=>'email',                                   
         ]);
 
         if ($validator->fails()){ return response()->json(['message'=>$validator->errors()->first()], 400);  }
         
         try {
-            //add request data to DB
-           
-    
+            
             $company = Company::create( $request->all());
+            
+            //send email after company has been created
+            
+            $companyEmail = $request["email"];
+            $companyName = $request["name"];
 
-            //todo send email after company has been created
+            Mail::to($companyEmail)->send(new CompanyCreatedEmail( $companyName));
     
            return CompanyResource::make($company);
     
