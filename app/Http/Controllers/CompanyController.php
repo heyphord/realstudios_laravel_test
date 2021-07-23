@@ -127,4 +127,26 @@ class CompanyController extends Controller
         }
 
     }
+
+    /**
+     * UPLOAD THE COMPANY LOGO
+     */
+    public function uploadLogo(Request $request){
+
+        $validator =  Validator::make($request->all(), [
+            'logo' => 'dimensions:min_width=100,min_height=200',
+        ]);
+
+        if ($validator->fails()){ return response()->json(['message'=>$validator->errors()->first()], 400);  }
+        
+
+        try {
+            $path = $request->file('logo')->store('/public');
+
+            return $path;
+        } catch (\Exception $e){
+            return response()->json(['message'=>$e->getMessage()], 400);
+        }
+
+    }
 }

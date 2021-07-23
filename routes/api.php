@@ -24,6 +24,7 @@ Route::group(['prefix' => 'v1'], function () {
     
     //COMPANY
     Route::resource('/company', CompanyController::class);
+    Route::post('/company/upload-logo', [CompanyController::class,"uploadLogo"]);
 
     //EMPLOYEE
     Route::resource('/employee', EmployeeController::class);
