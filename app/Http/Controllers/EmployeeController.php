@@ -122,4 +122,30 @@ class EmployeeController extends Controller
         }
 
     }
+
+    /**
+     * UPLOAD USERS PICTURE
+     */
+    public function uploadPicture(Request $request){
+
+        $validator =  Validator::make($request->all(), [
+            'employee_id'=>'required|exists:employees,id',                                   
+            'picture' => 'required|image|dimensions:min_width=100,min_height=200',
+        ]);
+
+        if ($validator->fails()){ return response()->json(['message'=>$validator->errors()->first()], 400);  }
+        
+
+        try {
+            $path = $request->file('picture')->store('/public');
+            $employee =Employee::where('id', $request->employee_id)->first();
+            $employee->update( ['picture'=>$path]);
+            return EmployeeResource::make($employee);
+
+
+        } catch (\Exception $e){
+            return response()->json(['message'=>$e->getMessage()], 400);
+        }
+
+    }
 }

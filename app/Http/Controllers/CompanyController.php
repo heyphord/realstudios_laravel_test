@@ -135,7 +135,7 @@ class CompanyController extends Controller
 
         $validator =  Validator::make($request->all(), [
             'company_id'=>'required|exists:companies,id',                                   
-            'logo' => 'required|dimensions:min_width=100,min_height=200',
+            'logo' => 'required|image|dimensions:min_width=100,min_height=100',
         ]);
 
         if ($validator->fails()){ return response()->json(['message'=>$validator->errors()->first()], 400);  }
